@@ -4,6 +4,16 @@
 #include <math.h>
 #include "dico.h"
 
+
+
+
+/*---------------------------------------------------------------------------*/
+//                               COMMENTAIRES
+/*---------------------------------------------------------------------------*/
+
+
+
+
 // dico create_dico()
 // {
 //   tree arbre;
@@ -19,6 +29,14 @@
 //   }
 //   return dict;
 // }
+//
+
+/*---------------------------------------------------------------------------*/
+//                          CREATION ET SUPPRESSION
+/*---------------------------------------------------------------------------*/
+
+
+
  dico create_dico()
  {
    //dico d=malloc(NB_KEYS*sizeof(dico)); // MIEUX vaut faire un calloc direct 
@@ -63,6 +81,12 @@ int nb_children(tree arbre)
   return compteur;
 }
 */
+
+
+/*---------------------------------------------------------------------------*/
+//                              COMPTEURS
+/*---------------------------------------------------------------------------*/
+
 
 
 int nb_children(tree arbre){
@@ -110,6 +134,11 @@ unsigned height(dico d)
 }
 
 
+/*---------------------------------------------------------------------------*/
+//                          AFFICHAGE
+/*---------------------------------------------------------------------------*/
+
+
 void print_prefix(dico d)
 {
   if (d==NULL)
@@ -130,6 +159,12 @@ void print_prefix(dico d)
     }
   }
 }
+
+
+/*---------------------------------------------------------------------------*/
+//                          COMPARAISONS
+/*---------------------------------------------------------------------------*/
+
 
 bool equals(dico d1, dico d2)
 {
@@ -152,6 +187,15 @@ bool equals(dico d1, dico d2)
     return test;
   }
 }
+
+
+/*---------------------------------------------------------------------------*/
+//                          FONCTIONS RECURSIVES
+/*---------------------------------------------------------------------------*/
+
+
+
+
 
 bool contains_rec(dico d, char * word, unsigned size)
 {
@@ -238,7 +282,12 @@ bool remove_rec(dico d, char * word, unsigned size)
   return remove_rec(d[ind]->children,suivant,size-1);
 }
 
+/*---------------------------------------------------------------------------*/
+//                          FONCTIONS ITERATIVES
+/*---------------------------------------------------------------------------*/
 
+
+/* Recherche d'un mot dans le dictionnaire */
 bool contains_iter(dico d, char * word, unsigned size){
     tree tempo;
     for (int i = 0 ; i < size ; i++){
@@ -267,7 +316,8 @@ tree create_node(void){
 }
 
 
-/* size est la taille du mot word */
+/* Ajout d'un mot dans le dictionnaire */
+
 bool add_iter(dico d, char * word, unsigned size){
     int i=0;
     tree tempo;
@@ -290,6 +340,7 @@ bool add_iter(dico d, char * word, unsigned size){
     return TRUE;
 }
 
+/* Suppression d'un mot dans le dictionnaire */
 bool remove_iter(dico d, char * word, unsigned size){
     if (!contains_iter(d,word,size))
         return FALSE;
@@ -300,6 +351,11 @@ bool remove_iter(dico d, char * word, unsigned size){
     return TRUE;
 }
 
+/*---------------------------------------------------------------------------*/
+//                              MAIN
+/*---------------------------------------------------------------------------*/
+
+
 
 int main()
 {
@@ -308,29 +364,29 @@ int main()
     /*TEST POUR LE TRAVAIL 1*/
 
 
-    //dictionnaire=create_dico();
-    //destroy_dico(&dictionnaire);
+    dictionnaire=create_dico();
+    destroy_dico(&dictionnaire);
 
 
     /*TEST POUR LE TRAVAIL 4*/
 
 
-   // dictionnaire=create_dico();
-  //  printf("TEST TRAVAIL 4\n");
-//    test=add_rec(dictionnaire,"bonjour",7);
-//    printf("Le test a été réussi : %d\n",test);
+    dictionnaire=create_dico();
+    printf("TEST TRAVAIL 4\n");
+    test=add_rec(dictionnaire,"bonjour",7);
+    printf("Le test a été réussi : %d\n",test);
 
     /*Test Pour L'itératif */
     //destroy_dico(&dictionnaire);
-    dictionnaire=create_dico();
-    test =add_iter(dictionnaire,"bonsoir", 7);
-    printf("\n le test a été réussi : %d",test);
-    test =add_iter(dictionnaire,"bonsoir", 7);
-    printf("\n le test a été réussi : %d",test);
-    test=contains_iter(dictionnaire,"bonsoir",7);
-    printf("\n le dictionnaire contient t'il bonsoir ? : %d",test);
-    remove_iter(dictionnaire,"bonsoir",7);
-    test=contains_iter(dictionnaire,"bonsoir",7);
-    printf("\n le dico contient t'il bonsoir ? : %d \n",test);
+ //   dictionnaire=create_dico();
+ //   test =add_iter(dictionnaire,"bonsoir", 7);
+ //   printf("\n le test a été réussi : %d",test);
+ //   test =add_iter(dictionnaire,"bonsoir", 7);
+ //   printf("\n le test a été réussi : %d",test);
+ //   test=contains_iter(dictionnaire,"bonsoir",7);
+//    printf("\n le dictionnaire contient t'il bonsoir ? : %d",test);
+  //  remove_iter(dictionnaire,"bonsoir",7);
+  //  test=contains_iter(dictionnaire,"bonsoir",7);
+ //   printf("\n le dico contient t'il bonsoir ? : %d \n",test);
 }
 
