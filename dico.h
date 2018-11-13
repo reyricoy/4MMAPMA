@@ -33,3 +33,12 @@ void destroy_dico(dico * d);
 unsigned nb_children(tree arbre);
 unsigned nb_nodes(dico d);
 unsigned height(dico d);
+void print_prefix(dico d);
+bool equals(dico d1, dico d2);
+
+
+/*//************TRAVAIL 3************\\*/
+bool contains_rec(dico d, char * word, unsigned size);
+bool add_rec(dico d, char * word, unsigned size);
+bool remove_rec(dico d, char * word, unsigned size);
+
