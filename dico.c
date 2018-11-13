@@ -246,9 +246,15 @@ bool add_iter(dico d, char * word, unsigned size){
 }
 
 bool remove_iter(dico d, char * word, unsigned size){
-
-
+    if (!contains_iter(d,word,size))
+        return FALSE;
+    for (int i = 0 ; i<size || nb_children(d[get_index(word[i])] != 1) ; i++){
+         d=d[get_index(word[i])]->children;
+    }
+    destroy_dico(d[get_index(word[i])]);
+    return TRUE;
 }
+
 
 int main()
 {
