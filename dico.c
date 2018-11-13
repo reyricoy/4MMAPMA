@@ -213,7 +213,42 @@ bool remove_rec(dico d, char * word, unsigned size)
 }
 
 
+bool contains_iter(dico d, char * word, unsigned size){
+    for (int i = 0 ; i < size ; i++){
+        if(d[get_index(word[i])]->first == word[i]){
+            d=d[get_index(word[i])]->children;
+        }else{
+            return FALSE;
+        }
+    }
+    return TRUE;
 
+}
+
+
+
+/* size est la taille du mot word */
+bool add_iter(dico d, char * word, unsigned size){
+    if (!contains_iter(d,word,size))
+        return FALSE;
+
+
+    for (int i = 0 ; i<size || nb_children(d[get_index(word[i])] != 1) ; i++){
+        d=d[get_index(word[i])]->children;
+    }
+    for(;i < size; i++){
+        d[get_index(word[i])]->children=create_dico();
+        d=d[get_index(word[i])]->children;
+        d[get_index(word[i])]->first=word[i];
+    }
+    d[get_index(word[i])]->end_of_word=TRUE;
+    return TRUE;
+}
+
+bool remove_iter(dico d, char * word, unsigned size){
+
+
+}
 
 int main()
 {

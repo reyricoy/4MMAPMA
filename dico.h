@@ -20,14 +20,14 @@ char get_char(unsigned index) { return index + 'a'; }
 
 
 
-/*//************TRAVAIL 1************\\*/
+/*************TRAVAIL 1************\\*/
 // construction
 dico create_dico();
 //destruction
 void destroy_dico(dico * d);
 
 
-/*//************TRAVAIL 2************\\*/
+/*************TRAVAIL 2************\\*/
 
 /** mesures */
 unsigned nb_children(tree arbre);
@@ -37,8 +37,18 @@ void print_prefix(dico d);
 bool equals(dico d1, dico d2);
 
 
-/*//************TRAVAIL 3************\\*/
+/*************TRAVAIL 3************\\*/
 bool contains_rec(dico d, char * word, unsigned size);
 bool add_rec(dico d, char * word, unsigned size);
 bool remove_rec(dico d, char * word, unsigned size);
+
+/*************TRAVAIL 3bis************\\*/
+bool contains_iter(dico d, char * word, unsigned size);
+/* size est la taille du mot word */
+bool add_iter(dico d, char * word, unsigned size);
+bool remove_iter(dico d, char * word, unsigned size);
+
+
+
+
 
