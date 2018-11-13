@@ -20,7 +20,7 @@ void destroy_dico(dico * d)
   free(d);
 }
 
-
+//test
 unsigned nb_children(tree arbre)
 {
   int compteur;
