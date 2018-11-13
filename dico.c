@@ -47,7 +47,7 @@ void destroy_dico(dico * d)
   free(*d);
 }
 
-
+/*
 int nb_children(tree arbre)
 {
     if(arbre==NULL){return 0;}
@@ -62,6 +62,24 @@ int nb_children(tree arbre)
   }
   return compteur;
 }
+*/
+
+
+int nb_children(tree arbre){
+    if(arbre==NULL)
+        return 0;
+    else{
+        for(int i = 0; i < NB_KEYS; i++){
+            if(arbre[i].children!=NULL)
+                return 1;
+            else{
+                return nb_children(*arbre[i].children);
+            }
+        }
+    }
+    return 0;
+}
+
 
 unsigned nb_nodes(dico d)
 {
