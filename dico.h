@@ -30,7 +30,7 @@ void destroy_dico(dico * d);
 /*************TRAVAIL 2************\\*/
 
 /** mesures */
-unsigned nb_children(tree arbre);
+int nb_children(tree arbre);
 unsigned nb_nodes(dico d);
 unsigned height(dico d);
 void print_prefix(dico d);
