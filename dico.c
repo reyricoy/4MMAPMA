@@ -21,9 +21,11 @@
 // }
  dico create_dico()
  {
-   dico d=malloc(NB_KEYS*sizeof(dico)); // MIEUX vaut faire un calloc direct 
+   //dico d=malloc(NB_KEYS*sizeof(dico)); // MIEUX vaut faire un calloc direct 
+   dico d = calloc(NB_KEYS,sizeof(*d));
    if(!d)printf("probleme allocation dico\n");
-   for(int i=0;i<NB_KEYS;i++)d[i]=NULL;
+   //for(int i=0;i<NB_KEYS;i++)d[i]=NULL;
+
    return d;
  }
 
@@ -42,12 +44,14 @@ void destroy_dico(dico * d)
         //On free tous les sous-dicos, et ensuite on remonte
     }
   }
-  free(d); //d et non *d
+  free(*d);
 }
 
 
 int nb_children(tree arbre)
 {
+    if(arbre==NULL){return 0;}
+
   int compteur;
   for(int i=0;i<NB_KEYS;i++)
   {
@@ -183,7 +187,7 @@ bool add_rec(dico d, char * word, unsigned size)
 
 bool remove_rec(dico d, char * word, unsigned size)
 {
-  dico temp;
+  //dico temp;
   if(contains_rec(d,word,size)==FALSE)
   {//Il ne peut pas etre enleve si il n'est pas dans le dico
     return FALSE;
@@ -218,42 +222,60 @@ bool remove_rec(dico d, char * word, unsigned size)
 
 
 bool contains_iter(dico d, char * word, unsigned size){
+    tree tempo;
     for (int i = 0 ; i < size ; i++){
-        if(d[get_index(word[i])]->first == word[i]){
-            d=d[get_index(word[i])]->children;
-        }else{
-            return FALSE;
-        }
-    }
-    return TRUE;
+       if (d[get_index(word[i])]==NULL){
+           return FALSE;
+       }
+       if(d[get_index(word[i])]->first == word[i]){
+           tempo=d[get_index(word[i])];
+           d=d[get_index(word[i])]->children;
+       }else{
+           return FALSE;
+       }
+   }
+   if(tempo->end_of_word){
+       return TRUE;
+   }
+   else{
+       return FALSE;
+   }
 
 }
 
+tree create_node(void){
+    tree node = calloc(1,sizeof(*node));
+    return node;
+}
 
 
 /* size est la taille du mot word */
 bool add_iter(dico d, char * word, unsigned size){
     int i=0;
-    if (!contains_iter(d,word,size))
+    tree tempo;
+    if (contains_iter(d,word,size))
         return FALSE;
 
 
-    for (i = 0 ; i<size || nb_children(d[get_index(word[i])]) != 1 ; i++){
+    for (i = 0 ; nb_children(d[get_index(word[i])]) >= 1 ; i++){
         d=d[get_index(word[i])]->children;
     }
+
     for(;i < size; i++){
-        d[get_index(word[i])]->children=create_dico();
-        d=d[get_index(word[i])]->children;
+        d[get_index(word[i])]=create_node();
         d[get_index(word[i])]->first=word[i];
+        d[get_index(word[i])]->children=create_dico();
+        tempo=d[get_index(word[i])];
+        d=d[get_index(word[i])]->children;
     }
-    d[get_index(word[i])]->end_of_word=TRUE;
+    tempo->end_of_word=TRUE;
     return TRUE;
 }
 
 bool remove_iter(dico d, char * word, unsigned size){
     if (!contains_iter(d,word,size))
         return FALSE;
-    for (int i = 0 ; i<size || nb_children(d[get_index(word[i])]) != 1 ; i++){
+    for (int i = 0 ;  nb_children(d[get_index(word[i])]) != 1 ; i++){
          d=d[get_index(word[i])]->children;
     }
     destroy_dico(&d);
@@ -275,20 +297,22 @@ int main()
     /*TEST POUR LE TRAVAIL 4*/
 
 
-    dictionnaire=create_dico();
-    printf("TEST TRAVAIL 4\n");
-    test=add_rec(dictionnaire,"bonjour",7);
-    printf("Le test a été réussi : %d\n",test);
+   // dictionnaire=create_dico();
+  //  printf("TEST TRAVAIL 4\n");
+//    test=add_rec(dictionnaire,"bonjour",7);
+//    printf("Le test a été réussi : %d\n",test);
 
     /*Test Pour L'itératif */
     //destroy_dico(&dictionnaire);
-    //dictionnaire=create_dico();
-    //test =add_iter(dictionnaire,"bonsoir", 8);
-    //printf("le test a été réussi : %d",test);
-    //test=contains_iter(dictionnaire,"bonsoir",8);
-    //printf("le contient t'il bonsoir ? : %d",test);
-    //remove_iter(dictionnaire,"bonsoir",8);
-    //test=contains_iter(dictionnaire,"bonsoir",8);
-    //printf("le contient t'il bonsoir ? : %d",test);
+    dictionnaire=create_dico();
+    test =add_iter(dictionnaire,"bonsoir", 7);
+    printf("\n le test a été réussi : %d",test);
+    test =add_iter(dictionnaire,"bonsoir", 7);
+    printf("\n le test a été réussi : %d",test);
+    test=contains_iter(dictionnaire,"bonsoir",7);
+    printf("\n le dictionnaire contient t'il bonsoir ? : %d",test);
+    remove_iter(dictionnaire,"bonsoir",7);
+    test=contains_iter(dictionnaire,"bonsoir",7);
+    printf("\n le dico contient t'il bonsoir ? : %d \n",test);
 }
 
