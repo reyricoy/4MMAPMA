@@ -39,7 +39,7 @@
 
  dico create_dico()
  {
-   //dico d=malloc(NB_KEYS*sizeof(dico)); // MIEUX vaut faire un calloc direct 
+   //dico d=malloc(NB_KEYS*sizeof(dico)); // MIEUX vaut faire un calloc direct
    dico d = calloc(NB_KEYS,sizeof(*d));
    if(!d)printf("probleme allocation dico\n");
    //for(int i=0;i<NB_KEYS;i++)d[i]=NULL;
@@ -188,6 +188,11 @@ bool equals(dico d1, dico d2)
   }
 }
 
+tree create_node(void){
+    tree noeud = calloc(1,sizeof(*noeud));
+    return noeud;
+}
+
 
 /*---------------------------------------------------------------------------*/
 //                          FONCTIONS RECURSIVES
@@ -196,55 +201,60 @@ bool equals(dico d1, dico d2)
 
 
 
-
+// il n'y a pas un problème de libération mémoire ??
 bool contains_rec(dico d, char * word, unsigned size)
 {
   if(size==0)
   {//si la taille du mot fait 0, il est fini
     return TRUE;
   }
-  int ind=get_index(word[0]);
-  if(d[ind]->first!=word[0])
+  //int ind = get_index(word[0]);
+  if(d[get_index(word[0])]==NULL)
+    return FALSE;
+  if(d[get_index(word[0])]->first != word[0])
   {//Si un caractere differt, on retourne FALSE
     return FALSE;
   }
-  char *suivant=(char*)malloc((size-1)*sizeof(char));
-  for(int i=0;i<size-1;i++)
+  //char *suivant = (char*)malloc((size-1)*sizeof(char));
+  char suivant[size-1];
+  for(int i = 0; i < (size - 1); i++)
   {
-    suivant[i]=word[i+1];
+    suivant[i] = word[i+1];
   }
   //On avance dans le dico, dans le mot et on reduit la taille
-  return contains_rec(d[ind]->children,suivant,size-1);
+  return contains_rec( d[get_index(word[0])]->children, suivant, size-1 );
 }
 
 bool add_rec(dico d, char * word, unsigned size)
 {
-  if(contains_rec(d,word,size)==TRUE)
+  /*if(contains_rec(d,word,size)==TRUE)
   {//Il ne peut pas etre ajoute si il est deja dans le dico
     return FALSE;
-  }
-  if(size==0)
+  }*/
+  if(size == 0)
   {//si la taille du mot est de 0 ça veut dire qu'il a ete ajoute
     return TRUE;
   }
+  //int ind = get_index(word[0]);
 
-  int ind=get_index(word[0]);
-  if(d[ind]->first!=word[0])
-  {//On rajoute chaque lettre du mot au bon endroit
-    d[ind]->first=word[0];
+  if(d[get_index(word[0])] == NULL){
+    d[get_index(word[0])]=create_node();
+    d[get_index(word[0])]->first=word[0];
+    d[get_index(word[0])]->children=create_dico();
   }
-  if(size==1)
+
+  if(size == 1)
   {//si la taille fait 1, le mot est fini donc on le note
-    d[ind]->end_of_word=TRUE;
+    d[get_index(word[0])]->end_of_word = TRUE;
   }
   //On fait la meme chose avec les lettres suivantes du mot
-  char *suivant=(char*)malloc((size-1)*sizeof(char));
-  for(int i=0;i<size-1;i++)
+  char suivant[size-1];
+  for(int i = 0 ;i < size - 1; i++)
   {
-    suivant[i]=word[i+1];
+    suivant[i] = word[i+1];
   }
   //On avance dans le dico, dans le mot et on reduit la taille
-  return add_rec(d[ind]->children,suivant,size-1);
+  return add_rec(d[get_index(word[0])]->children, suivant, size-1);
 }
 
 bool remove_rec(dico d, char * word, unsigned size)
@@ -273,7 +283,8 @@ bool remove_rec(dico d, char * word, unsigned size)
     d[ind]->end_of_word=FALSE;
   }
   //On fait la meme chose avec les lettres suivantes du mot
-  char *suivant=(char*)malloc((size-1)*sizeof(char));
+  //char *suivant=(char*)malloc((size-1)*sizeof(char));
+  char suivant[size-1];
   for(int i=0;i<size-1;i++)
   {
     suivant[i]=word[i+1];
@@ -310,10 +321,6 @@ bool contains_iter(dico d, char * word, unsigned size){
 
 }
 
-tree create_node(void){
-    tree node = calloc(1,sizeof(*node));
-    return node;
-}
 
 
 /* Ajout d'un mot dans le dictionnaire */
@@ -364,8 +371,8 @@ int main()
     /*TEST POUR LE TRAVAIL 1*/
 
 
-    dictionnaire=create_dico();
-    destroy_dico(&dictionnaire);
+    //dictionnaire=create_dico();
+    //destroy_dico(&dictionnaire);
 
 
     /*TEST POUR LE TRAVAIL 4*/
@@ -389,4 +396,3 @@ int main()
   //  test=contains_iter(dictionnaire,"bonsoir",7);
  //   printf("\n le dico contient t'il bonsoir ? : %d \n",test);
 }
-
