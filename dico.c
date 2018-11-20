@@ -197,32 +197,27 @@ tree create_node(void){
 /*---------------------------------------------------------------------------*/
 //                          FONCTIONS RECURSIVES
 /*---------------------------------------------------------------------------*/
-
-
-
-
-// il n'y a pas un problème de libération mémoire ??
 bool contains_rec(dico d, char * word, unsigned size)
 {
-  if(size==0)
+  if((size == 0) && d[get_index(word[0])]->end_of_word)
   {//si la taille du mot fait 0, il est fini
     return TRUE;
   }
-  //int ind = get_index(word[0]);
+  // si la case est vide c'est qu'il n'y a pas de lettre : out ->
   if(d[get_index(word[0])]==NULL)
     return FALSE;
+  // si il y a quelque chose mais que le caractère differt on sort ->
   if(d[get_index(word[0])]->first != word[0])
-  {//Si un caractere differt, on retourne FALSE
+  {
     return FALSE;
   }
-  //char *suivant = (char*)malloc((size-1)*sizeof(char));
   char suivant[size-1];
   for(int i = 0; i < (size - 1); i++)
   {
     suivant[i] = word[i+1];
   }
   //On avance dans le dico, dans le mot et on reduit la taille
-  return contains_rec( d[get_index(word[0])]->children, suivant, size-1 );
+  return contains_rec( (size==0)?d:d[get_index(word[0])]->children, (size==0)? word:suivant, size - 1);
 }
 
 bool add_rec(dico d, char * word, unsigned size)
@@ -367,7 +362,7 @@ bool remove_iter(dico d, char * word, unsigned size){
 int main()
 {
     dico dictionnaire;
-    bool test;
+    bool test,test2,test3;
     /*TEST POUR LE TRAVAIL 1*/
 
 
@@ -381,7 +376,9 @@ int main()
     dictionnaire=create_dico();
     printf("TEST TRAVAIL 4\n");
     test=add_rec(dictionnaire,"bonjour",7);
-    printf("Le test a été réussi : %d\n",test);
+    //test2=contains_rec(dictionnaire,"bonjour",7);
+    //test3=contains_rec(dictionnaire,"bon",3);
+    printf("Les tests : [%d][%d][%d]\n",test,test2,test3);
 
     /*Test Pour L'itératif */
     //destroy_dico(&dictionnaire);
