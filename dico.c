@@ -13,74 +13,35 @@
 
 
 
-
-// dico create_dico()
-// {
-//   tree arbre;
-//   printf("azaazeaze");
-//   arbre=(tree)malloc(sizeof(tree));
-//   arbre->first=0;
-//   arbre->end_of_word=0;
-//   arbre->children=NULL;
-//   dico dict=(dico)malloc(26*sizeof(tree)); //allocation d'un tableau de 26 arbres
-//   for(int i=0;i<NB_KEYS;i++)
-//   {
-//       dict[i]=arbre;
-//   }
-//   return dict;
-// }
-//
-
 /*---------------------------------------------------------------------------*/
 //                          CREATION ET SUPPRESSION
 /*---------------------------------------------------------------------------*/
 
-
-
  dico create_dico()
  {
-   //dico d=malloc(NB_KEYS*sizeof(dico)); // MIEUX vaut faire un calloc direct
    dico d = calloc(NB_KEYS,sizeof(*d));
    if(!d)printf("probleme allocation dico\n");
-   //for(int i=0;i<NB_KEYS;i++)d[i]=NULL;
-
    return d;
  }
 
-void destroy_dico(dico * d)
+
+int destroy_dico(dico * d)
 {
   if(*d==NULL)
   {
-    return;
+    return 1;
   }
   for(int i=0;i<NB_KEYS;i++)
   {
     if((*d)[i]!=NULL)
     {
-        destroy_dico(&(((*d)[i])->children)); // *d[i] devient -> (*d)[i]
+        return destroy_dico(&(((*d)[i])->children)); // *d[i] devient -> (*d)[i]
         free((*d)[i]);
         //On free tous les sous-dicos, et ensuite on remonte
     }
   }
   free(*d);
 }
-
-/*
-int nb_children(tree arbre)
-{
-    if(arbre==NULL){return 0;}
-
-  int compteur;
-  for(int i=0;i<NB_KEYS;i++)
-  {
-    if(arbre[i].children!=NULL)
-    {
-      compteur++;
-    }
-  }
-  return compteur;
-}
-*/
 
 
 /*---------------------------------------------------------------------------*/
@@ -94,7 +55,7 @@ int nb_children(tree arbre){
         return 0;
     else{
         for(int i = 0; i < NB_KEYS; i++){
-            if(arbre[i].children!=NULL)
+            if(arbre[i].children==NULL)
                 return 1;
             else{
                 return nb_children(*arbre[i].children);
@@ -137,9 +98,12 @@ unsigned height(dico d)
 /*---------------------------------------------------------------------------*/
 //                          AFFICHAGE
 /*---------------------------------------------------------------------------*/
-
-
 void print_prefix(dico d)
+{
+  print_prefix_aux(d,0);
+}
+
+void print_prefix_aux(dico d,int it)
 {
   if (d==NULL)
   {
@@ -149,13 +113,20 @@ void print_prefix(dico d)
   {
     for(int i=0;i<NB_KEYS;i++)
     {
-      printf("+[%c]%c\n",d[i]->first,d[i]->first);
-      if(d[i]->end_of_word==TRUE)
+      if(d[i]!=NULL)
       {
-        printf("*");
+        for(int j=0;j<it;j++)
+        {
+          printf("+ ");
+        }
+        printf("[%c]%c",d[i]->first,d[i]->first);
+        if(d[i]->end_of_word==TRUE)
+        {
+          printf("*");
+        }
+        printf("\n");
+        print_prefix_aux(d[i]->children,it+1);
       }
-      printf("\t");
-      print_prefix(d[i]->children);
     }
   }
 }
@@ -177,12 +148,20 @@ bool equals(dico d1, dico d2)
   {
     for(int i=0;i<NB_KEYS;i++)
     {
-      if(d1[i]->first!=d2[i]->first||d1[i]->end_of_word!=d2[i]->end_of_word)
+      if(d2[i]!=NULL&&d1[i]!=NULL)
+      {
+        if(d1[i]->first!=d2[i]->first||d1[i]->end_of_word!=d2[i]->end_of_word)
+        {
+          return FALSE;
+        }
+        //On teste si tous les enfants du dico verifient la condition
+        test=test&&equals(d1[i]->children,d2[i]->children);
+      }
+      if(((d1[i]==NULL &&d2[i]!=NULL) ||(d2[i]==NULL &&d1[i]!=NULL)))
       {
         return FALSE;
       }
-      //On teste si tous les enfants du dico verifient la condition
-      test=test&&equals(d1[i]->children,d2[i]->children);
+
     }
     return test;
   }
@@ -199,9 +178,17 @@ tree create_node(void){
 /*---------------------------------------------------------------------------*/
 bool contains_rec(dico d, char * word, unsigned size)
 {
-  if((size == 0) && d[get_index(word[0])]->end_of_word)
+  if((size == 0) )
   {//si la taille du mot fait 0, il est fini
     return TRUE;
+  }
+  if((size == 1) && d[get_index(word[0])]->end_of_word)
+  {//si la taille du mot fait 1,et qu'il y a end_of_word il est fini
+    return TRUE;
+  }
+  if((size == 1) && (!d[get_index(word[0])]->end_of_word))
+  {//si la taille du mot fait 1,et qu'il n'y a pas end_of_word, le mot n'y ai pas
+    return FALSE;
   }
   // si la case est vide c'est qu'il n'y a pas de lettre : out ->
   if(d[get_index(word[0])]==NULL)
@@ -264,11 +251,15 @@ bool remove_rec(dico d, char * word, unsigned size)
     return TRUE;
   }
   int ind=get_index(word[0]);
-  if(d[ind]->first==word[0])
+  if(d[ind]->first==word[0]&&size!=1)
   {//On enleve chaque lettre du mot
-    if(nb_children(d[ind])==1)
+    if(nb_words(d[ind]->children)==1)
     {
-      destroy_dico(&(d[ind]->children));
+      dico temporaire=d[ind]->children;
+      destroy_dico(&(temporaire));
+      tree temp=d[ind];
+      free(temp);
+      d[ind]=NULL;
       return TRUE;
     }
   }
@@ -353,6 +344,126 @@ bool remove_iter(dico d, char * word, unsigned size){
     return TRUE;
 }
 
+
+/*---------------------------------------------------------------------------*/
+//                     NOMBRE DE MOTS ET PRINT DICO
+/*---------------------------------------------------------------------------*/
+
+
+unsigned nb_words(dico d)
+{
+  int nombre=0;
+  if (d==NULL)
+  {
+    return 0;
+  }
+  else
+  {
+    for(int i=0;i<NB_KEYS;i++)
+    {
+      if(d[i]!=NULL)
+      {
+        if(d[i]->end_of_word==TRUE)
+        {
+          nombre+=nb_words(d[i]->children)+1;
+        }
+        else
+        {
+          nombre+=nb_words(d[i]->children);
+        }
+      }
+    }
+  }
+  return nombre;
+}
+
+
+list print_dico_aux(dico d, list l, char* mot)          //cree liste contenant tout les mots du dico
+{
+    unsigned i;
+    char* copie = calloc(512,sizeof(char));
+    for(i=0;i<NB_KEYS;i++)
+    {
+        if(d[i]!=NULL)
+        {
+            strcpy(copie,mot);
+            strncat(copie,&(d[i]->first),1);
+            //strncat(copie,"\0",1);
+            if(d[i]->end_of_word){
+              l=add_mot(copie,l);
+            }
+            l = print_dico_aux(d[i]->children,l,copie);
+        }
+    }
+    free(copie);
+    return l;
+}
+
+void print_dico(dico d)                 //imprimme tout les mots du dico
+{
+    list l = create_list();
+    char* mot = calloc(512,sizeof(char));
+    l = print_dico_aux(d,l,mot);
+    print_list(l);
+    free(mot);
+    free_list(l);
+}
+
+
+/************ LISTES ************/
+
+list create_list() {
+    list liste=calloc(1,sizeof(*liste));
+    liste->next=NULL;
+    liste->word=" ";
+    liste->taille=0;
+    return liste;
+}
+
+/* insertion de l'element en tete de liste */
+list add_mot(char* mot, list l)
+{
+    if(strlen(mot)==0) return l;  //si mot vide on fait rien
+    if(!l)
+    {
+        l=calloc(1,sizeof(*l));
+        l->word=calloc(128,sizeof(char));
+        if(strcpy(l->word,mot)) return l;
+    }
+    list ptr_sur_l = l;
+    while(l->next != NULL) l=l->next;
+    list p = calloc(1,sizeof(*p));
+    p->word = calloc(128,sizeof(char));
+    strcpy(p->word,mot);
+    l->next = p;
+    return ptr_sur_l;
+}
+
+
+void print_list(list l)
+{
+  while(l!=NULL)
+  {
+
+    printf("%s",l->word);
+    printf("\n");
+    l=l->next;
+  }
+}
+
+void free_list(list l)
+{
+  list temp;
+  while(l!=NULL)
+  {
+    temp=l;
+    l=l->next;
+    free(temp);
+  }
+}
+
+
+
 /*---------------------------------------------------------------------------*/
 //                              MAIN
 /*---------------------------------------------------------------------------*/
@@ -361,35 +472,71 @@ bool remove_iter(dico d, char * word, unsigned size){
 
 int main()
 {
-    dico dictionnaire;
-    bool test,test2,test3;
+    dico dictionnaire,dictionnaire1,dictionnaire2;
+    bool test,test2,test3,test4,test5;
+    int nb_mots;
     /*TEST POUR LE TRAVAIL 1*/
 
 
     //dictionnaire=create_dico();
     //destroy_dico(&dictionnaire);
 
+    /*TEST POUR LE TRAVAIL 2*/
+
+    // dictionnaire1=create_dico();
+    // dictionnaire2=create_dico();
+    // printf("TEST TRAVAIL 1\n");
+    // test=equals(dictionnaire1,dictionnaire2);
+    // add_rec(dictionnaire1,"bonjour",7);
+    // test3=equals(dictionnaire1,dictionnaire2);
+    // add_rec(dictionnaire2,"bonjour",7);
+    // test2=equals(dictionnaire1,dictionnaire2);
+    // printf("Les dictionnaires sont égaux au debut [%d] a la fin [%d]\n Et milieu [%d]\n",test,test2,test3);
+    // //Si les tests fonctionnent on a : 1 1 0
+    // destroy_dico(&dictionnaire1);
+    // destroy_dico(&dictionnaire2);
 
     /*TEST POUR LE TRAVAIL 4*/
 
+    /*Test Pour Le Récursif */
 
-    dictionnaire=create_dico();
-    printf("TEST TRAVAIL 4\n");
-    test=add_rec(dictionnaire,"bonjour",7);
-    //test2=contains_rec(dictionnaire,"bonjour",7);
-    //test3=contains_rec(dictionnaire,"bon",3);
-    printf("Les tests : [%d][%d][%d]\n",test,test2,test3);
+    // dictionnaire=create_dico();
+    // printf("TEST TRAVAIL 4\n");
+    // test=add_rec(dictionnaire,"bonjour",7);
+    // test2=contains_rec(dictionnaire,"bonjour",7);
+    // test3=contains_rec(dictionnaire,"bon",3);
+    // add_rec(dictionnaire,"bonsoir",7);
+    // print_prefix(dictionnaire);
+    // nb_mots=nb_words(dictionnaire);
+    // remove_rec(dictionnaire,"bonjour",7);
+    // test4=contains_rec(dictionnaire,"bonjour",7);
+    // printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
+    // destroy_dico(&dictionnaire);
+
 
     /*Test Pour L'itératif */
-    //destroy_dico(&dictionnaire);
- //   dictionnaire=create_dico();
- //   test =add_iter(dictionnaire,"bonsoir", 7);
- //   printf("\n le test a été réussi : %d",test);
- //   test =add_iter(dictionnaire,"bonsoir", 7);
- //   printf("\n le test a été réussi : %d",test);
- //   test=contains_iter(dictionnaire,"bonsoir",7);
-//    printf("\n le dictionnaire contient t'il bonsoir ? : %d",test);
-  //  remove_iter(dictionnaire,"bonsoir",7);
-  //  test=contains_iter(dictionnaire,"bonsoir",7);
- //   printf("\n le dico contient t'il bonsoir ? : %d \n",test);
+
+   // dictionnaire=create_dico();
+   // test =add_iter(dictionnaire,"bonsoir", 7);
+   // printf("\n le test a été réussi : %d",test);
+   // test =add_iter(dictionnaire,"bonsoir", 7);
+   // printf("\n le test a été réussi : %d",test);
+   // test=contains_iter(dictionnaire,"bonsoir",7);
+   // printf("\n le dictionnaire contient t'il bonsoir ? : %d",test);
+   // remove_iter(dictionnaire,"bonsoir",7);
+   // test=contains_iter(dictionnaire,"bonsoir",7);
+   // printf("\n le dico contient t'il bonsoir ? : %d \n",test);
+
+ // TEST TRAVAIL 5 : IMPRESSION DU DICO
+    dictionnaire=create_dico();
+    add_rec(dictionnaire,"bonjour",7);
+    add_rec(dictionnaire,"bon",3);
+    add_rec(dictionnaire,"bonsoir",7);
+    print_prefix(dictionnaire);
+
+    remove_rec(dictionnaire,"bon",3);
+    print_prefix(dictionnaire);
+
+    print_dico(dictionnaire);
+    destroy_dico(&dictionnaire);
 }
