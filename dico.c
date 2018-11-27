@@ -69,18 +69,16 @@ int destroy_dico(dico * d)
 
 
 int nb_children(tree arbre){
+    int cpt=0;
     if(arbre==NULL)
         return 0;
     else{
         for(int i = 0; i < NB_KEYS; i++){
-            if(arbre[i].children==NULL)
-                return 1;
-            else{
-                return nb_children(*arbre[i].children);
-            }
+            if(arbre->children[i] != NULL)
+                cpt++;
         }
     }
-    return 0;
+    return cpt;
 }
 
 
@@ -363,23 +361,24 @@ bool contains_iter(dico d, char * word, unsigned size){
 
 bool add_iter(dico d, char * word, unsigned size){
     int i=0;
-    tree tempo;
+    if(d==NULL){
+      return FALSE;
+    }
     if (contains_iter(d,word,size))
         return FALSE;
 
-
-    for (i = 0 ; nb_children(d[get_index(word[i])]) >= 1 ; i++){
-        d=d[get_index(word[i])]->children;
-    }
-
-    for(;i < size; i++){
+    for(i=0;i < size; i++){
+      if (d[get_index(word[i])]==NULL){
         d[get_index(word[i])]=create_node();
         d[get_index(word[i])]->first=word[i];
         d[get_index(word[i])]->children=create_dico();
-        tempo=d[get_index(word[i])];
-        d=d[get_index(word[i])]->children;
+      }
+
+      if (i==(size-1)){
+          d[get_index(word[i])]->end_of_word=TRUE;
+      }
+      d=d[get_index(word[i])]->children;
     }
-    tempo->end_of_word=TRUE;
     return TRUE;
 }
 
@@ -694,7 +693,8 @@ int main()
    //  print_prefix(dictionnaire);
    //
    //  print_dico(dictionnaire);
-
+   dico d = create_dico();
+   test_3(d);
 
 // TEST TRAVAIL 6 : ITERATEUR :
 // appeler une fonction test ici.
