@@ -27,6 +27,13 @@ char get_char(unsigned index) { return index + 'a'; }
    return d;
  }
 
+ tree create_tree()
+ {
+   tree t = calloc(1,sizeof(*t));
+   if(!t)printf("probleme allocation dico\n");
+   return t;
+ }
+
 
 int destroy_dico(dico * d)
 {
@@ -78,7 +85,10 @@ unsigned nb_nodes(dico d)
   }
   for(int i=0;i<NB_KEYS;i++)
   {
-    noeuds+=nb_nodes(d[i]->children);
+    if (d[i]!=NULL)
+    {
+      noeuds+=nb_nodes(d[i]->children);
+    }
   }
   return noeuds+1;
 }
@@ -89,10 +99,13 @@ unsigned height(dico d)
   {
     return 0;
   }
-  unsigned hauteur=height(d[0]->children);
+  int hauteur =0;
   for(int i=0;i<NB_KEYS;i++)
   {
-    hauteur=(hauteur>height(d[i]->children))?hauteur:height(d[i]->children);
+    if (d[i]!=NULL)
+    {
+      hauteur=(hauteur>height(d[i]->children))?hauteur:height(d[i]->children);
+    }
   }
   return hauteur;
 }
@@ -487,16 +500,19 @@ iterator * start_iterator(dico d){
 
   */
 
-  iterator * it = calloc(1,sizeof(it));
-  it->word = calloc(height(d)+1,sizeof(char));
-  it->stack = calloc(nb_nodes(d), sizeof(struct iterator_info));
-
-  for(int i = 26; i >= 0 ; i-- ){
+  iterator * it = calloc(1,sizeof(*it));
+  iterator_info * test=calloc(500,sizeof(*test));
+  test->t=create_tree();
+  test->index_word=0;
+  it->word = calloc(512,sizeof(it->word));
+  (it->stack) = (test);
+  it->index_stack=-1;
+  for(int i = 25; i >= 0 ; i-- ){
     if(d[i] != NULL){
-        it->stack->t = d[i];
+        it->stack[it->index_stack+1].t = d[i];
         it->stack->index_word = 0;
         it->index_stack++;
-        it->stack++;
+        // it->stack++;
     }
   }
   return it;
@@ -509,21 +525,44 @@ void destroy_iterator(iterator ** it){
 }
 
 bool has_next(iterator * it){
-    if(it->stack == NULL)
-      return TRUE;
+    if(it->index_stack == -1)
+      return FALSE;
 
-    return FALSE;
+    return TRUE;
 }
 char * next (iterator * it){
-  while(it->stack->t->end_of_word == 0){
-    it->word[it->stack->index_word] = it->stack->t->first;
-    it->stack->index_word++;
+  while(it->stack[it->index_stack].t->end_of_word == 0){
+    it->word[it->stack[it->index_stack].index_word] = it->stack[it->index_stack].t->first;
+    it->word[it->stack[it->index_stack].index_word+1] = '\0';
+    tree arbre=it->stack[it->index_stack].t;
+    it->stack[it->index_stack].index_word++;
+    int index_word_mem=it->stack[it->index_stack].index_word;
     it->index_stack--;
     for(int i = 26 ; i != 0 ; i--){
-      if(it->stack->t->children[i] != NULL){
-        it->stack[it->index_stack].t = it->stack->t->children[i];
-        it->stack[it->index_stack].index_word++;
+      if(arbre->children[i] != NULL){
         it->index_stack++;
+        it->stack[it->index_stack].t = arbre->children[i];
+        it->stack[it->index_stack].index_word=index_word_mem;
+        // it->stack[it->index_stack].index_word++;
+
+      }
+    }
+  }
+  if(it->stack[it->index_stack].t->end_of_word == 1)
+  {
+    it->word[it->stack[it->index_stack].index_word] = it->stack[it->index_stack].t->first;
+    it->word[it->stack[it->index_stack].index_word+1]='\0';
+    tree arbre=it->stack[it->index_stack].t;
+    it->stack[it->index_stack].index_word++;
+    int index_word_mem=it->stack[it->index_stack].index_word;
+    it->index_stack--;
+
+    for(int i = 26 ; i != 0 ; i--){
+      if(arbre->children[i] != NULL){
+        it->index_stack++;
+        it->stack[it->index_stack].t = arbre->children[i];
+        it->stack[it->index_stack].index_word=index_word_mem;
+
       }
     }
   }
@@ -566,18 +605,22 @@ int main()
 
     /*Test Pour Le Récursif */
 
-    // dictionnaire=create_dico();
-    // printf("TEST TRAVAIL 4\n");
-    // test=add_rec(dictionnaire,"bonjour",7);
-    // test2=contains_rec(dictionnaire,"bonjour",7);
-    // test3=contains_rec(dictionnaire,"bon",3);
-    // add_rec(dictionnaire,"bonsoir",7);
-    // print_prefix(dictionnaire);
-    // nb_mots=nb_words(dictionnaire);
-    // remove_rec(dictionnaire,"bonjour",7);
-    // test4=contains_rec(dictionnaire,"bonjour",7);
-    // printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
-    // destroy_dico(&dictionnaire);
+    dictionnaire=create_dico();
+    printf("TEST TRAVAIL 4\n");
+    test=add_rec(dictionnaire,"ours",4);
+    add_rec(dictionnaire,"ourson",6);
+    add_rec(dictionnaire,"oursonne",8);
+    add_rec(dictionnaire,"ourse",6);
+    add_rec(dictionnaire,"brule",5);
+    add_rec(dictionnaire,"brille",6);
+    add_rec(dictionnaire,"bord",4);
+    dd_rec(dictionnaire,"bordeau",7);
+    dd_rec(dictionnaire,"bateau",6);
+    rec(dictionnaire,"bonsoir",7);
+    print_prefix(dictionnaire);
+    nb_mots=nb_words(dictionnaire);
+    printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
+    destroy_dico(&dictionnaire);
 
 
     /*Test Pour L'itératif */
@@ -595,12 +638,14 @@ int main()
 
  // TEST TRAVAIL 5 : IMPRESSION DU DICO
     dictionnaire=create_dico();
-    add_rec(dictionnaire,"bonjour",7);
+    add_rec(dictionnaire,"bonjozy",7);
     add_rec(dictionnaire,"bon",3);
-    add_rec(dictionnaire,"bonsoir",7);
+     // add_rec(dictionnaire,"co",2);
+   add_rec(dictionnaire,"bonsoiw",7);
+   add_rec(dictionnaire,"coucou",6);
     print_prefix(dictionnaire);
 
-    remove_rec(dictionnaire,"bon",3);
+    // remove_rec(dictionnaire,"b",3);
     print_prefix(dictionnaire);
 
     print_dico(dictionnaire);
@@ -608,8 +653,12 @@ int main()
 
 // TEST TRAVAIL 6 : ITERATEUR :
 // appeler une fonction test ici.
-    iterator * dit = start_iterator(&dictionnaire);
-    while (has_next(dit)) printf("-%s", next(dit));
+    iterator * dit = start_iterator(dictionnaire);
+    while (has_next(dit))
+    {
+     printf("-%s", next(dit));
+   }
+   printf("\n");
     destroy_iterator(&dit);
 
     destroy_dico(&dictionnaire);

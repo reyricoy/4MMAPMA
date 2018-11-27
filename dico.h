@@ -35,14 +35,14 @@ list add_mot(char* mot, list l);
 
 /********STRUCTURE ITERATEUR ********/
 
-struct iterator_info {
+struct _iterator_info {
     tree t;
     int index_word;
 };
-
+typedef struct _iterator_info iterator_info;
 struct _iterator {
     char * word;
-    struct iterator_info * stack;
+     iterator_info * stack;
     int index_stack;
 };
 
@@ -65,7 +65,7 @@ unsigned height(dico d);
 void print_prefix(dico d );
 void print_prefix_aux(dico d,int it);
 bool equals(dico d1, dico d2);
-
+tree create_tree();
 
 /*************TRAVAIL 3************\\*/
 bool contains_iter(dico d, char * word, unsigned size);
