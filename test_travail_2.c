@@ -17,7 +17,12 @@ Pouvoir dire si deux dictionnaire sont egaux.
 int test2()
 {
   printf("\n");
-  printf("TEST 2 : \n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
+  printf("TEST 2 : nb noeuds, hauteur, nb children, egalité\n");
+  printf("\n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
   bool test1,test2;
   dico dictionnaire1, dictionnaire2;
   dictionnaire1=create_dico();

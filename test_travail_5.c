@@ -19,7 +19,13 @@ Puis une fonction pour imprimer les mots un par un du dictionnaire.
 int test5()
 {
   printf("\n");
-  printf("TEST 5 : \n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
+  printf("TEST 5 : Nb mots du dico et Affichage 1 par 1\n");
+  printf("\n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
+
   dico dictionnaire1 = create_dico();
   int nbmots1,nbmots2;
   add_rec(dictionnaire1,"ours",4);

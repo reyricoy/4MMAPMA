@@ -11,7 +11,13 @@ ainsi que sa destruction.
 int test1()
 {
   printf("\n");
-  printf("TEST 1 : \n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
+  printf("TEST 1 :  Creation et destruction d'un dictionnaire\n");
+  printf("\n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
+
   dico dictionnaire;
   int test;
 

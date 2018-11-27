@@ -6,15 +6,21 @@
 
 void menu(){
 int  test = 0;
-while (test != 'q'){
-  printf("Que voulez vous faire ? \n");
-  printf("Test 1 : [1] ?");
-  printf("Test 2 : [2] ?");
-  printf("Test 3 : [3] ?");
-  printf("Test 4 : [4] ?");
-  printf("Test 5 : [5] ?");
-  printf("Test 6 : [6] ?");
-  printf("QUITTER : [q] ?");
+while (test != 7){
+  printf("\n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
+  printf("                              MENU\n");
+  printf("\n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
+  printf("         Test 1 : [1]");
+  printf("         Test 2 : [2]\n");
+  printf("         Test 3 : [3]");
+  printf("         Test 4 : [4]\n");
+  printf("         Test 5 : [5]");
+  printf("         Test 6 : [6]\n");
+  printf("QUITTER : [7]\n");
 
   scanf("%d",&test);
 
@@ -31,11 +37,13 @@ while (test != 'q'){
       break;
     case 6: printf("test 6 : %d\n", test6());
       break;
-    case 'q':
+    case 7: printf("Merci, à bientôt !");
       break;
-    default:
+    default: printf("Choix invalide");
+      test=7;
       break;
   }
+  printf("\n");
 }
 
 }

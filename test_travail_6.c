@@ -13,7 +13,13 @@
 int test6()
 {
   printf("\n");
-  printf("TEST 6 : \n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
+  printf("TEST 6 : L'itérateur \n");
+  printf("\n");
+  printf("---------------------------------------------------------------\n");
+  printf("\n");
+  
   dico dictionnaire1 = create_dico();
   add_rec(dictionnaire1,"ours",4);
   add_rec(dictionnaire1,"ourson",6);
