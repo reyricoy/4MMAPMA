@@ -30,7 +30,7 @@ char get_char(unsigned index) { return index + 'a'; }
  tree create_tree()
  {
    tree t = calloc(1,sizeof(*t));
-   if(!t)printf("probleme allocation dico\n");
+   if(!t)printf("probleme allocation tree\n");
    return t;
  }
 
@@ -535,23 +535,33 @@ iterator * start_iterator(dico d){
   */
 
   iterator * it = calloc(1,sizeof(*it));
-  iterator_info * test=calloc(nb_nodes(d),sizeof(*test));
-
-  test->t=create_tree();
-  test->index_word=0;
-  it->word = calloc(height(d)+1,sizeof(it->word));
-  it->stack = test;
+  if(it==NULL)
+  {
+    printf("Erreur allocation iterateur\n");
+    return NULL;
+  }
+  it->word = calloc(height(d)+1,sizeof(char));
+  if(it->word==NULL)
+  {
+    printf("Erreur allocation word iterateur\n");
+    return NULL;
+  }
+  it->stack = calloc(nb_nodes(d),sizeof( iterator_info));
+  if(it->stack==NULL)
+  {
+    printf("Erreur allocation stack iterateur\n");
+    return NULL;
+  }
   it->index_stack=-1;
   for(int i = NB_KEYS-1; i >= 0 ; i-- ){
     if(d[i] != NULL){
         it->stack[it->index_stack+1].t = d[i];
         it->stack->index_word = 0;
         it->index_stack++;
-        // it->stack++;
+
     }
   }
-  // free(test->t);
-  // free(test);
+
   return it;
 }
 
@@ -642,16 +652,16 @@ int main()
     printf("TEST TRAVAIL 4\n");
     test=add_rec(dictionnaire,"ours",4);
     add_rec(dictionnaire,"ourson",6);
-    // add_rec(dictionnaire,"oursonne",8);
-    // add_rec(dictionnaire,"ourse",5);
-    // add_rec(dictionnaire,"brule",5);
-    // add_rec(dictionnaire,"brille",6);
-    // add_rec(dictionnaire,"bord",4);
-    // add_rec(dictionnaire,"bordeau",7);
-    // add_rec(dictionnaire,"bateau",6);
-    // add_rec(dictionnaire,"bonsoir",7);
-    // test=remove_rec(dictionnaire,"ourse",5);
-    
+    add_rec(dictionnaire,"oursonne",8);
+    add_rec(dictionnaire,"ourse",5);
+    add_rec(dictionnaire,"brule",5);
+    add_rec(dictionnaire,"brille",6);
+    add_rec(dictionnaire,"bord",4);
+    add_rec(dictionnaire,"bordeau",7);
+    add_rec(dictionnaire,"bateau",6);
+    add_rec(dictionnaire,"bonsoir",7);
+    test=remove_rec(dictionnaire,"ourse",5);
+
     // print_prefix(dictionnaire);
     // nb_mots=nb_words(dictionnaire);
     // printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
