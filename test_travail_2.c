@@ -11,8 +11,8 @@ Pouvoir imprimer toutes les lettres du dictionnaire
 Pouvoir dire si deux dictionnaire sont egaux.
 */
 
-int main()
+int test2()
 {
   dico dictionnaire1, dictionnaire2;
-  
+
 }

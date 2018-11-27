@@ -15,8 +15,8 @@ typedef struct node * tree;
 typedef struct node ** dico;
 
 #define NB_KEYS 26
-unsigned get_index(char c) { return c - 'a'; }
-char get_char(unsigned index) { return index + 'a'; }
+unsigned get_index(char c);
+char get_char(unsigned index);
 
 /********STRUCTURE DES LISTES********/
 

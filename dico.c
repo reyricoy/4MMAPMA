@@ -16,6 +16,9 @@
 /*---------------------------------------------------------------------------*/
 //                          CREATION ET SUPPRESSION
 /*---------------------------------------------------------------------------*/
+unsigned get_index(char c) { return c - 'a'; }
+char get_char(unsigned index) { return index + 'a'; }
+
 
  dico create_dico()
  {
@@ -512,15 +515,19 @@ bool has_next(iterator * it){
     return FALSE;
 }
 char * next (iterator * it){
-
-  char *tampon = it->word;
   while(it->stack->t->end_of_word == 0){
-    *tampon = it->stack->t->first;
-
-    tampon ++;
+    it->word[it->stack->index_word] = it->stack->t->first;
+    it->stack->index_word++;
+    it->index_stack--;
+    for(int i = 26 ; i != 0 ; i--){
+      if(it->stack->t->children[i] != NULL){
+        it->stack[it->index_stack].t = it->stack->t->children[i];
+        it->stack[it->index_stack].index_word++;
+        it->index_stack++;
+      }
+    }
   }
-  return tampon;
-
+  return it->word;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -532,7 +539,7 @@ char * next (iterator * it){
 int main()
 {
     dico dictionnaire,dictionnaire1,dictionnaire2;
-    bool test,test2,test3,test4,test5;
+    //bool test,test2,test3,test4,test5;
     int nb_mots;
     /*TEST POUR LE TRAVAIL 1*/
 
@@ -597,13 +604,14 @@ int main()
     print_prefix(dictionnaire);
 
     print_dico(dictionnaire);
-    destroy_dico(&dictionnaire);
 
 
 // TEST TRAVAIL 6 : ITERATEUR :
 // appeler une fonction test ici.
-    iterator * dit = start_iterator(d);
+    iterator * dit = start_iterator(&dictionnaire);
     while (has_next(dit)) printf("-%s", next(dit));
     destroy_iterator(&dit);
+
+    destroy_dico(&dictionnaire);
 
 }

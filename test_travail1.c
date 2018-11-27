@@ -5,7 +5,7 @@ Le principe du travail 1 était la création du dictionnaire
 ainsi que sa destruction.
 
 */
-int main()
+int test1()
 {
   dico dictionnaire;
   int test;
@@ -15,5 +15,5 @@ int main()
   test=destroy_dico(&dictionnaire);
 
   printf("Le dico a bien ete free [%d]",test);
-  
+
 }
