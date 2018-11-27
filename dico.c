@@ -43,17 +43,21 @@ int destroy_dico(dico * d)
   }
   for(int i=0;i<NB_KEYS;i++)
   {
+
     if((*d)[i]!=NULL)
     {
+      if((*d)[i]->children!=NULL)
+      {
         destroy_dico(&(((*d)[i])->children)); // *d[i] devient -> (*d)[i]
         free((*d)[i]);
         (*d)[i]=NULL;
         //On free tous les sous-dicos, et ensuite on remonte
+      }
     }
   }
   free(*d);
   *d=NULL;
-  d=NULL;
+
   return 1;
 }
 
@@ -188,7 +192,7 @@ bool equals(dico d1, dico d2)
 }
 
 tree create_node(void){
-    tree noeud = calloc(1,sizeof(*noeud));
+    tree noeud = malloc(sizeof(*noeud));
     return noeud;
 }
 
@@ -534,6 +538,7 @@ iterator * start_iterator(dico d){
 }
 
 void destroy_iterator(iterator ** it){
+  destroy_dico(&(*it)->stack->t->children);
   free((*it)->stack->t);
   free((*it)->stack);
   free((*it)->word);
@@ -633,10 +638,10 @@ int main()
     add_rec(dictionnaire,"bordeau",7);
     add_rec(dictionnaire,"bateau",6);
     add_rec(dictionnaire,"bonsoir",7);
-    test=remove_rec(dictionnaire,"ourse",5);
-    print_prefix(dictionnaire);
-    nb_mots=nb_words(dictionnaire);
-    printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
+    // test=remove_rec(dictionnaire,"ourse",5);
+    // print_prefix(dictionnaire);
+    // nb_mots=nb_words(dictionnaire);
+    // printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
     // destroy_dico(&dictionnaire);
 
 
@@ -676,8 +681,7 @@ int main()
      printf("-%s", next(dit));
    }
    printf("\n");
-    destroy_iterator(&dit);
-
+     destroy_iterator(&dit);
     destroy_dico(&dictionnaire);
 
 }
