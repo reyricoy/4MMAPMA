@@ -306,7 +306,7 @@ bool remove_rec(dico d, char * word, unsigned size)
   }
   if(size==1)
   {//si la taille du mot est de 1 ça veut dire qu'il est fini : pour l
-  //enlever il fau retirer le "end_of_word"
+  //enlever il faut retirer le "end_of_word"
     d[ind]->end_of_word=FALSE;
     if(nb_words(d[ind]->children)==0)
     {
@@ -389,7 +389,7 @@ bool remove_iter(dico d, char * word, unsigned size){
     for (int i = 0 ;  nb_children(d[get_index(word[i])]) != 1 ; i++){
          d=d[get_index(word[i])]->children;
     }
-    destroy_dico(&d);
+    destroy_dico(d);
     return TRUE;
 }
 
