@@ -86,11 +86,19 @@ int nb_children(tree arbre){
 
 unsigned nb_nodes(dico d)
 {
-  unsigned noeuds;
+  unsigned noeuds=0,compteur=0;
   if (d==NULL)
   {
     return 0;
   }
+  for(int i=0;i<NB_KEYS;i++)
+  {
+    if (d[i]==NULL)
+    {
+      compteur++;
+    }
+  }
+  if (compteur==NB_KEYS)return 0;
   for(int i=0;i<NB_KEYS;i++)
   {
     if (d[i]!=NULL)
@@ -107,7 +115,16 @@ unsigned height(dico d)
   {
     return 0;
   }
+  int compteur=0;
   int hauteur =0;
+  for(int i=0;i<NB_KEYS;i++)
+  {
+    if (d[i]==NULL)
+    {
+      compteur++;
+    }
+  }
+  if (compteur==NB_KEYS)return 0;
   for(int i=0;i<NB_KEYS;i++)
   {
     if (d[i]!=NULL)
@@ -115,7 +132,7 @@ unsigned height(dico d)
       hauteur=(hauteur>height(d[i]->children))?hauteur:height(d[i]->children);
     }
   }
-  return hauteur;
+  return hauteur+1;
 }
 
 
@@ -284,8 +301,6 @@ bool remove_rec(dico d, char * word, unsigned size)
     }
     if(nb_words(d[ind]->children)==1)
     {
-      printf("C'est le nb de mots %d \n",nb_words(d[ind]->children));
-      printf("%c\n", d[ind]->first);
       dico temporaire=d[ind]->children;
       destroy_dico(&(temporaire));
       return TRUE;
@@ -297,7 +312,7 @@ bool remove_rec(dico d, char * word, unsigned size)
     d[ind]->end_of_word=FALSE;
     if(nb_words(d[ind]->children)==0)
     {
-      printf("lalallalala je apasse");
+      destroy_dico(&d[ind]->children);
       free(d[ind]);
       d[ind]=NULL;
       return TRUE;
@@ -520,13 +535,14 @@ iterator * start_iterator(dico d){
   */
 
   iterator * it = calloc(1,sizeof(*it));
-  iterator_info * test=calloc(500,sizeof(*test));
+  iterator_info * test=calloc(nb_nodes(d),sizeof(*test));
+
   test->t=create_tree();
   test->index_word=0;
-  it->word = calloc(512,sizeof(it->word));
-  (it->stack) = (test);
+  it->word = calloc(height(d)+1,sizeof(it->word));
+  it->stack = test;
   it->index_stack=-1;
-  for(int i = 25; i >= 0 ; i-- ){
+  for(int i = NB_KEYS-1; i >= 0 ; i-- ){
     if(d[i] != NULL){
         it->stack[it->index_stack+1].t = d[i];
         it->stack->index_word = 0;
@@ -534,12 +550,12 @@ iterator * start_iterator(dico d){
         // it->stack++;
     }
   }
+  // free(test->t);
+  // free(test);
   return it;
 }
 
 void destroy_iterator(iterator ** it){
-  destroy_dico(&(*it)->stack->t->children);
-  free((*it)->stack->t);
   free((*it)->stack);
   free((*it)->word);
   free(*it);
@@ -559,13 +575,11 @@ char * next (iterator * it){
     it->stack[it->index_stack].index_word++;
     int index_word_mem=it->stack[it->index_stack].index_word;
     it->index_stack--;
-    for(int i = 26 ; i != 0 ; i--){
+    for(int i = NB_KEYS-1 ; i != 0 ; i--){
       if(arbre->children[i] != NULL){
         it->index_stack++;
         it->stack[it->index_stack].t = arbre->children[i];
         it->stack[it->index_stack].index_word=index_word_mem;
-        // it->stack[it->index_stack].index_word++;
-
       }
     }
   }
@@ -577,13 +591,11 @@ char * next (iterator * it){
     it->stack[it->index_stack].index_word++;
     int index_word_mem=it->stack[it->index_stack].index_word;
     it->index_stack--;
-
     for(int i = 26 ; i != 0 ; i--){
       if(arbre->children[i] != NULL){
         it->index_stack++;
         it->stack[it->index_stack].t = arbre->children[i];
         it->stack[it->index_stack].index_word=index_word_mem;
-
       }
     }
   }
@@ -630,15 +642,16 @@ int main()
     printf("TEST TRAVAIL 4\n");
     test=add_rec(dictionnaire,"ours",4);
     add_rec(dictionnaire,"ourson",6);
-    add_rec(dictionnaire,"oursonne",8);
-    add_rec(dictionnaire,"ourse",5);
-    add_rec(dictionnaire,"brule",5);
-    add_rec(dictionnaire,"brille",6);
-    add_rec(dictionnaire,"bord",4);
-    add_rec(dictionnaire,"bordeau",7);
-    add_rec(dictionnaire,"bateau",6);
-    add_rec(dictionnaire,"bonsoir",7);
+    // add_rec(dictionnaire,"oursonne",8);
+    // add_rec(dictionnaire,"ourse",5);
+    // add_rec(dictionnaire,"brule",5);
+    // add_rec(dictionnaire,"brille",6);
+    // add_rec(dictionnaire,"bord",4);
+    // add_rec(dictionnaire,"bordeau",7);
+    // add_rec(dictionnaire,"bateau",6);
+    // add_rec(dictionnaire,"bonsoir",7);
     // test=remove_rec(dictionnaire,"ourse",5);
+    
     // print_prefix(dictionnaire);
     // nb_mots=nb_words(dictionnaire);
     // printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
