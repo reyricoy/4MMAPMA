@@ -45,12 +45,16 @@ int destroy_dico(dico * d)
   {
     if((*d)[i]!=NULL)
     {
-        return destroy_dico(&(((*d)[i])->children)); // *d[i] devient -> (*d)[i]
+        destroy_dico(&(((*d)[i])->children)); // *d[i] devient -> (*d)[i]
         free((*d)[i]);
+        (*d)[i]=NULL;
         //On free tous les sous-dicos, et ensuite on remonte
     }
   }
   free(*d);
+  *d=NULL;
+  d=NULL;
+  return 1;
 }
 
 
@@ -269,13 +273,17 @@ bool remove_rec(dico d, char * word, unsigned size)
   int ind=get_index(word[0]);
   if(d[ind]->first==word[0]&&size!=1)
   {//On enleve chaque lettre du mot
+    if(nb_words(d)==1)
+    {
+      destroy_dico(&d);
+      return TRUE;
+    }
     if(nb_words(d[ind]->children)==1)
     {
+      printf("C'est le nb de mots %d \n",nb_words(d[ind]->children));
+      printf("%c\n", d[ind]->first);
       dico temporaire=d[ind]->children;
       destroy_dico(&(temporaire));
-      tree temp=d[ind];
-      free(temp);
-      d[ind]=NULL;
       return TRUE;
     }
   }
@@ -283,6 +291,13 @@ bool remove_rec(dico d, char * word, unsigned size)
   {//si la taille du mot est de 1 ça veut dire qu'il est fini : pour l
   //enlever il fau retirer le "end_of_word"
     d[ind]->end_of_word=FALSE;
+    if(nb_words(d[ind]->children)==0)
+    {
+      printf("lalallalala je apasse");
+      free(d[ind]);
+      d[ind]=NULL;
+      return TRUE;
+    }
   }
   //On fait la meme chose avec les lettres suivantes du mot
   //char *suivant=(char*)malloc((size-1)*sizeof(char));
@@ -519,6 +534,7 @@ iterator * start_iterator(dico d){
 }
 
 void destroy_iterator(iterator ** it){
+  free((*it)->stack->t);
   free((*it)->stack);
   free((*it)->word);
   free(*it);
@@ -578,7 +594,7 @@ char * next (iterator * it){
 int main()
 {
     dico dictionnaire,dictionnaire1,dictionnaire2;
-    //bool test,test2,test3,test4,test5;
+    bool test,test2,test3,test4,test5;
     int nb_mots;
     /*TEST POUR LE TRAVAIL 1*/
 
@@ -610,17 +626,18 @@ int main()
     test=add_rec(dictionnaire,"ours",4);
     add_rec(dictionnaire,"ourson",6);
     add_rec(dictionnaire,"oursonne",8);
-    add_rec(dictionnaire,"ourse",6);
+    add_rec(dictionnaire,"ourse",5);
     add_rec(dictionnaire,"brule",5);
     add_rec(dictionnaire,"brille",6);
     add_rec(dictionnaire,"bord",4);
-    dd_rec(dictionnaire,"bordeau",7);
-    dd_rec(dictionnaire,"bateau",6);
-    rec(dictionnaire,"bonsoir",7);
+    add_rec(dictionnaire,"bordeau",7);
+    add_rec(dictionnaire,"bateau",6);
+    add_rec(dictionnaire,"bonsoir",7);
+    test=remove_rec(dictionnaire,"ourse",5);
     print_prefix(dictionnaire);
     nb_mots=nb_words(dictionnaire);
     printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
-    destroy_dico(&dictionnaire);
+    // destroy_dico(&dictionnaire);
 
 
     /*Test Pour L'itératif */
@@ -637,18 +654,18 @@ int main()
    // printf("\n le dico contient t'il bonsoir ? : %d \n",test);
 
  // TEST TRAVAIL 5 : IMPRESSION DU DICO
-    dictionnaire=create_dico();
-    add_rec(dictionnaire,"bonjozy",7);
-    add_rec(dictionnaire,"bon",3);
-     // add_rec(dictionnaire,"co",2);
-   add_rec(dictionnaire,"bonsoiw",7);
-   add_rec(dictionnaire,"coucou",6);
-    print_prefix(dictionnaire);
-
-    // remove_rec(dictionnaire,"b",3);
-    print_prefix(dictionnaire);
-
-    print_dico(dictionnaire);
+   //  dictionnaire=create_dico();
+   //  add_rec(dictionnaire,"bonjozy",7);
+   //  add_rec(dictionnaire,"bon",3);
+   //   // add_rec(dictionnaire,"co",2);
+   // add_rec(dictionnaire,"bonsoiw",7);
+   // add_rec(dictionnaire,"coucou",6);
+   //  print_prefix(dictionnaire);
+   //
+   //  // remove_rec(dictionnaire,"b",3);
+   //  print_prefix(dictionnaire);
+   //
+   //  print_dico(dictionnaire);
 
 
 // TEST TRAVAIL 6 : ITERATEUR :
