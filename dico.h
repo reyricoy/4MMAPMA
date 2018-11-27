@@ -91,3 +91,10 @@ iterator * start_iterator(dico d);
 void destroy_iterator(iterator ** it);
 bool has_next(iterator * it);
 char * next (iterator * it);
+
+/*****************TESTS****************\\*/
+int test1();
+int test2();
+int test3();
+int test5();
+int test6();

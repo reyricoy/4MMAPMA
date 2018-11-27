@@ -6,7 +6,6 @@
 
 
 
-
 /*---------------------------------------------------------------------------*/
 //                               COMMENTAIRES
 /*---------------------------------------------------------------------------*/
@@ -389,7 +388,7 @@ bool remove_iter(dico d, char * word, unsigned size){
     for (int i = 0 ;  nb_children(d[get_index(word[i])]) != 1 ; i++){
          d=d[get_index(word[i])]->children;
     }
-    destroy_dico(d);
+    destroy_dico(&d);
     return TRUE;
 }
 
@@ -619,92 +618,96 @@ char * next (iterator * it){
 
 int main()
 {
-    dico dictionnaire,dictionnaire1,dictionnaire2;
-    bool test,test2,test3,test4,test5;
-    int nb_mots;
-    /*TEST POUR LE TRAVAIL 1*/
+
+  test1();
+  test2();
+  test3();
+  //test4();
+  //test5();
+  test6();
+  printf("\n");
 
 
-    //dictionnaire=create_dico();
-    //destroy_dico(&dictionnaire);
 
-    /*TEST POUR LE TRAVAIL 2*/
+//     dico dictionnaire,dictionnaire1,dictionnaire2;
+//     bool test,test2,test3,test4,test5;
+//     int nb_mots;
+//     /*TEST POUR LE TRAVAIL 1*/
+//
+//
+//     //dictionnaire=create_dico();
+//     //destroy_dico(&dictionnaire);
+//
+//     /*TEST POUR LE TRAVAIL 2*/
+//
+//     // dictionnaire1=create_dico();
+//     // dictionnaire2=create_dico();
+//     // printf("TEST TRAVAIL 1\n");
+//     // test=equals(dictionnaire1,dictionnaire2);
+//     // add_rec(dictionnaire1,"bonjour",7);
+//     // test3=equals(dictionnaire1,dictionnaire2);
+//     // add_rec(dictionnaire2,"bonjour",7);
+//     // test2=equals(dictionnaire1,dictionnaire2);
+//     // printf("Les dictionnaires sont égaux au debut [%d] a la fin [%d]\n Et milieu [%d]\n",test,test2,test3);
+//     // //Si les tests fonctionnent on a : 1 1 0
+//     // destroy_dico(&dictionnaire1);
+//     // destroy_dico(&dictionnaire2);
+//
+//     /*TEST POUR LE TRAVAIL 4*/
+//
+//     /*Test Pour Le Récursif */
+//
+//     dictionnaire=create_dico();
+//     printf("TEST TRAVAIL 4\n");
+//     test=add_rec(dictionnaire,"ours",4);
+//     add_rec(dictionnaire,"ourson",6);
+//     add_rec(dictionnaire,"oursonne",8);
+//     add_rec(dictionnaire,"ourse",5);
+//     add_rec(dictionnaire,"brule",5);
+//     add_rec(dictionnaire,"brille",6);
+//     add_rec(dictionnaire,"bord",4);
+//     add_rec(dictionnaire,"bordeau",7);
+//     add_rec(dictionnaire,"bateau",6);
+//     add_rec(dictionnaire,"bonsoir",7);
+//     test=remove_rec(dictionnaire,"ourse",5);
+//
+//     // print_prefix(dictionnaire);
+//     // nb_mots=nb_words(dictionnaire);
+//     // printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
+//     // destroy_dico(&dictionnaire);
+//
+//
+//     /*Test Pour L'itératif */
+//
+//    // dictionnaire=create_dico();
+//    // test =add_iter(dictionnaire,"bonsoir", 7);
+//    // printf("\n le test a été réussi : %d",test);
+//    // test =add_iter(dictionnaire,"bonsoir", 7);
+//    // printf("\n le test a été réussi : %d",test);
+//    // test=contains_iter(dictionnaire,"bonsoir",7);
+//    // printf("\n le dictionnaire contient t'il bonsoir ? : %d",test);
+//    // remove_iter(dictionnaire,"bonsoir",7);
+//    // test=contains_iter(dictionnaire,"bonsoir",7);
+//    // printf("\n le dico contient t'il bonsoir ? : %d \n",test);
+//
+//  // TEST TRAVAIL 5 : IMPRESSION DU DICO
+//    //  dictionnaire=create_dico();
+//    //  add_rec(dictionnaire,"bonjozy",7);
+//    //  add_rec(dictionnaire,"bon",3);
+//    //   // add_rec(dictionnaire,"co",2);
+//    // add_rec(dictionnaire,"bonsoiw",7);
+//    // add_rec(dictionnaire,"coucou",6);
+//    //  print_prefix(dictionnaire);
+//    //
+//    //  // remove_rec(dictionnaire,"b",3);
+//    //  print_prefix(dictionnaire);
+//    //
+//    //  print_dico(dictionnaire);
+//
+//    test_3();
+//
+// // TEST TRAVAIL 6 : ITERATEUR :
+// // appeler une fonction test ici.
 
-    // dictionnaire1=create_dico();
-    // dictionnaire2=create_dico();
-    // printf("TEST TRAVAIL 1\n");
-    // test=equals(dictionnaire1,dictionnaire2);
-    // add_rec(dictionnaire1,"bonjour",7);
-    // test3=equals(dictionnaire1,dictionnaire2);
-    // add_rec(dictionnaire2,"bonjour",7);
-    // test2=equals(dictionnaire1,dictionnaire2);
-    // printf("Les dictionnaires sont égaux au debut [%d] a la fin [%d]\n Et milieu [%d]\n",test,test2,test3);
-    // //Si les tests fonctionnent on a : 1 1 0
-    // destroy_dico(&dictionnaire1);
-    // destroy_dico(&dictionnaire2);
-
-    /*TEST POUR LE TRAVAIL 4*/
-
-    /*Test Pour Le Récursif */
-
-    dictionnaire=create_dico();
-    printf("TEST TRAVAIL 4\n");
-    test=add_rec(dictionnaire,"ours",4);
-    add_rec(dictionnaire,"ourson",6);
-    add_rec(dictionnaire,"oursonne",8);
-    add_rec(dictionnaire,"ourse",5);
-    add_rec(dictionnaire,"brule",5);
-    add_rec(dictionnaire,"brille",6);
-    add_rec(dictionnaire,"bord",4);
-    add_rec(dictionnaire,"bordeau",7);
-    add_rec(dictionnaire,"bateau",6);
-    add_rec(dictionnaire,"bonsoir",7);
-    test=remove_rec(dictionnaire,"ourse",5);
-
-    // print_prefix(dictionnaire);
-    // nb_mots=nb_words(dictionnaire);
-    // printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
-    // destroy_dico(&dictionnaire);
-
-
-    /*Test Pour L'itératif */
-
-   // dictionnaire=create_dico();
-   // test =add_iter(dictionnaire,"bonsoir", 7);
-   // printf("\n le test a été réussi : %d",test);
-   // test =add_iter(dictionnaire,"bonsoir", 7);
-   // printf("\n le test a été réussi : %d",test);
-   // test=contains_iter(dictionnaire,"bonsoir",7);
-   // printf("\n le dictionnaire contient t'il bonsoir ? : %d",test);
-   // remove_iter(dictionnaire,"bonsoir",7);
-   // test=contains_iter(dictionnaire,"bonsoir",7);
-   // printf("\n le dico contient t'il bonsoir ? : %d \n",test);
-
- // TEST TRAVAIL 5 : IMPRESSION DU DICO
-   //  dictionnaire=create_dico();
-   //  add_rec(dictionnaire,"bonjozy",7);
-   //  add_rec(dictionnaire,"bon",3);
-   //   // add_rec(dictionnaire,"co",2);
-   // add_rec(dictionnaire,"bonsoiw",7);
-   // add_rec(dictionnaire,"coucou",6);
-   //  print_prefix(dictionnaire);
-   //
-   //  // remove_rec(dictionnaire,"b",3);
-   //  print_prefix(dictionnaire);
-   //
-   //  print_dico(dictionnaire);
-   dico d = create_dico();
-   test_3(d);
-
-// TEST TRAVAIL 6 : ITERATEUR :
-// appeler une fonction test ici.
-    iterator * dit = start_iterator(dictionnaire);
-    while (has_next(dit))
-    {
-     printf("-%s", next(dit));
-   }
-   printf("\n");
-     destroy_iterator(&dit);
-    destroy_dico(&dictionnaire);
 
 }

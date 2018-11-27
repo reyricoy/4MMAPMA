@@ -1,5 +1,8 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
 #include "dico.h"
-
+//#include "test_travail_2.h"
 /*
 Le principe du TRAVAIL 2 etait d'ecrire les primitives de
 manipulation d'un dictionnaire.
@@ -13,7 +16,12 @@ Pouvoir dire si deux dictionnaire sont egaux.
 
 int test2()
 {
+  printf("\n");
+  printf("TEST 2 : \n");
+  bool test1,test2;
   dico dictionnaire1, dictionnaire2;
+  dictionnaire1=create_dico();
+  dictionnaire2=create_dico();
   add_rec(dictionnaire1,"ours",4);
   add_rec(dictionnaire1,"ourson",6);
   add_rec(dictionnaire1,"oursonne",8);
@@ -43,5 +51,5 @@ int test2()
   remove_rec(dictionnaire2,"ours",4);
   test2=equals(dictionnaire1,dictionnaire2);
   printf("EGALITE DES DEUX DICTIONNAIRES AVANT [%d] ET APRES [%d]\n",test1,test2);
-
+  return 1;
 }
