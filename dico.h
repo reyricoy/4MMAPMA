@@ -32,7 +32,24 @@ list create_list() ;
 void print_list(list l);
 void free_list(list l);
 list add_mot(char* mot, list l);
-/*************TRAVAIL 1************\\*/
+
+/********STRUCTURE ITERATEUR ********/
+
+struct iterator_info {
+    tree t;
+    int index_word;
+};
+
+struct _iterator {
+    char * word;
+    struct iterator_info * stack;
+    int index_stack;
+};
+
+typedef struct _iterator iterator;
+
+/*************TRAVAIL 1*************/
+
 // construction
 dico create_dico();
 //destruction
@@ -69,8 +86,8 @@ void print_dico(dico d);
 list print_dico_aux(dico d,list words_list,char* word_incomplete);
 
 
-/*************TRAVAIL 5************\\*/
-// iterator * start_iterator(dico d);
-// void destroy_iterator(iterator ** it);
-// bool has_next(iterator * it);
-// char * next (iterator * it);
+/*************TRAVAIL 6************\\*/
+iterator * start_iterator(dico d);
+void destroy_iterator(iterator ** it);
+bool has_next(iterator * it);
+char * next (iterator * it);

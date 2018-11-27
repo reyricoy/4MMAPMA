@@ -462,7 +462,66 @@ void free_list(list l)
   }
 }
 
+/******************* ITERATEUR ****************/
 
+iterator * start_iterator(dico d){
+  // il doit contenir dans
+  /*
+  struct iterator_info {
+      tree t; <- tous les arbres avec estampille 0
+      int index_word; estampille
+  };
+
+  struct _iterator {
+      char * word; <- le mot initiallement NULL
+      struct iterator_info * stack; la pile d'arbres
+      int index_stack; <- le nombre d'arbres Nb nb_nodes
+  };
+
+  typedef struct _iterator iterator;
+
+  il doit retourner un pointeur d'iterator
+
+  */
+
+  iterator * it = calloc(1,sizeof(it));
+  it->word = calloc(height(d)+1,sizeof(char));
+  it->stack = calloc(nb_nodes(d), sizeof(struct iterator_info));
+
+  for(int i = 26; i >= 0 ; i-- ){
+    if(d[i] != NULL){
+        it->stack->t = d[i];
+        it->stack->index_word = 0;
+        it->index_stack++;
+        it->stack++;
+    }
+  }
+  return it;
+}
+
+void destroy_iterator(iterator ** it){
+  free((*it)->stack);
+  free((*it)->word);
+  free(*it);
+}
+
+bool has_next(iterator * it){
+    if(it->stack == NULL)
+      return TRUE;
+
+    return FALSE;
+}
+char * next (iterator * it){
+
+  char *tampon = it->word;
+  while(it->stack->t->end_of_word == 0){
+    *tampon = it->stack->t->first;
+
+    tampon ++;
+  }
+  return tampon;
+
+}
 
 /*---------------------------------------------------------------------------*/
 //                              MAIN
@@ -539,4 +598,12 @@ int main()
 
     print_dico(dictionnaire);
     destroy_dico(&dictionnaire);
+
+
+// TEST TRAVAIL 6 : ITERATEUR :
+// appeler une fonction test ici.
+    iterator * dit = start_iterator(d);
+    while (has_next(dit)) printf("-%s", next(dit));
+    destroy_iterator(&dit);
+
 }
