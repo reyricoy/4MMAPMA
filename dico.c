@@ -382,6 +382,7 @@ bool add_iter(dico d, char * word, unsigned size){
     return TRUE;
 }
 
+
 /* Suppression d'un mot dans le dictionnaire */
 bool remove_iter(dico d, char * word, unsigned size){
   int i;
