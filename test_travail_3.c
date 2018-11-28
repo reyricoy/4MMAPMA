@@ -33,7 +33,6 @@ int test3(){
   add_iter(d,"bordeau",7);
   add_iter(d,"bateau",6);
   add_iter(d,"bonsoir",7);
-  add_iter(d,"cordial",7);
 
   print_prefix(d);
   print_dico(d);
@@ -43,11 +42,11 @@ int test3(){
   printf("Cette fonction ne fonctionne pas pour le moment\n");
   printf("\n");
 
-  remove_iter(d,"cordial",7);
-  //remove_iter(d,"bonjour",7);
-  //remove_iter(d,"cordialement",12);
+/*  remove_iter(d,"cordial",7);
+  remove_iter(d,"bonjour",7);
+  remove_iter(d,"cordialement",12);
   print_prefix(d);
-
+*/
   printf("Testons si cordial est dans le dico :");
   if(contains_iter(d,"cordial",7)){
     printf("Cordial est toujours là\n");
@@ -60,13 +59,6 @@ int test3(){
     printf("bateau est un mot du dictionnaire\n");
   }else{
     printf("bateau est absent du dico\n");
-  }
-
-  printf("Testons si oursonne est un mot du dico :");
-  if(contains_iter(d,"oursonne",8)){
-    printf("oursonne est un mot du dictionnaire\n");
-  }else{
-    printf("oursonne est absent du dico\n");
   }
 
   destroy_dico(&d);

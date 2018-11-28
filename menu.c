@@ -26,16 +26,22 @@ while (test != 7){
 
   switch(test){
     case 1: printf("test 1 : %d\n", test1());
+	return;
       break;
     case 2: printf("test 2 : %d\n", test2());
+	return;
       break;
     case 3: printf("test 3 : %d\n", test3());
+	return;
       break;
-    case 4:
+    case 4: printf("test 4 : %d\n", test4());
+	return;
       break;
     case 5: printf("test 5 : %d\n", test5());
+	return;
       break;
     case 6: printf("test 6 : %d\n", test6());
+	return;
       break;
     case 7: printf("Merci, à bientôt !");
       break;

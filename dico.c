@@ -276,7 +276,6 @@ bool add_rec(dico d, char * word, unsigned size)
   //On avance dans le dico, dans le mot et on reduit la taille
   return add_rec(d[get_index(word[0])]->children, suivant, size-1);
 }
-
 bool remove_rec(dico d, char * word, unsigned size)
 {
   //dico temp;
@@ -299,13 +298,24 @@ bool remove_rec(dico d, char * word, unsigned size)
     if(nb_words(d[ind]->children)==1)
     {
       dico temporaire=d[ind]->children;
+      char temp_first=d[ind]->first;
+      char temp_end_of_word=d[ind]->end_of_word;
       destroy_dico(&(temporaire));
+      free(d[ind]);
+      d[ind]=NULL;
+      if(temp_end_of_word==TRUE)
+      {
+        d[ind]=create_node();
+        d[ind]->end_of_word=temp_end_of_word;
+        d[ind]->first=temp_first;
+      }
+
       return TRUE;
     }
   }
   if(size==1)
   {//si la taille du mot est de 1 ça veut dire qu'il est fini : pour l
-  //enlever il faut retirer le "end_of_word"
+  //enlever il fau retirer le "end_of_word"
     d[ind]->end_of_word=FALSE;
     if(nb_words(d[ind]->children)==0)
     {
@@ -326,6 +336,7 @@ bool remove_rec(dico d, char * word, unsigned size)
   return remove_rec(d[ind]->children,suivant,size-1);
 }
 
+
 /*---------------------------------------------------------------------------*/
 //                          FONCTIONS ITERATIVES
 /*---------------------------------------------------------------------------*/
@@ -333,20 +344,19 @@ bool remove_rec(dico d, char * word, unsigned size)
 
 /* Recherche d'un mot dans le dictionnaire */
 bool contains_iter(dico d, char * word, unsigned size){
-
+    tree tempo;
     for (int i = 0 ; i < size ; i++){
-      if (d[get_index(word[i])]==NULL){
-          return FALSE;
-      }
-    if(d[get_index(word[i])]->first == word[i]){
-           if(i!= size-1){
-             d=d[get_index(word[i])]->children;
-           }
+       if (d[get_index(word[i])]==NULL){
+           return FALSE;
+       }
+       if(d[get_index(word[i])]->first == word[i]){
+           tempo=d[get_index(word[i])];
+           d=d[get_index(word[i])]->children;
        }else{
            return FALSE;
        }
    }
-   if(d[get_index(word[size-1])]->end_of_word){
+   if(tempo->end_of_word){
        return TRUE;
    }
    else{
@@ -382,18 +392,14 @@ bool add_iter(dico d, char * word, unsigned size){
     return TRUE;
 }
 
-
 /* Suppression d'un mot dans le dictionnaire */
 bool remove_iter(dico d, char * word, unsigned size){
-  int i;
     if (!contains_iter(d,word,size))
         return FALSE;
-    for (i = 0 ;  nb_children(d[get_index(word[i])]) != 1 ; i++){
+    for (int i = 0 ;  nb_children(d[get_index(word[i])]) != 1 ; i++){
          d=d[get_index(word[i])]->children;
     }
-    destroy_dico(&d[get_index(word[i])]->children);
-    free(d[get_index(word[i])]);
-    d[get_index(word[i])]=NULL;
+    destroy_dico(&d);
     return TRUE;
 }
 
@@ -437,16 +443,19 @@ list print_dico_aux(dico d, list l, char* mot)          //cree liste contenant t
     char* copie = calloc(512,sizeof(char));
     for(i=0;i<NB_KEYS;i++)
     {
+      if (d!=NULL)
+      {
         if(d[i]!=NULL)
         {
             strcpy(copie,mot);
             strncat(copie,&(d[i]->first),1);
-            //strncat(copie,"\0",1);
             if(d[i]->end_of_word){
               l=add_mot(copie,l);
             }
             l = print_dico_aux(d[i]->children,l,copie);
         }
+      }
+
     }
     free(copie);
     return l;
@@ -623,95 +632,6 @@ char * next (iterator * it){
 
 int main()
 {
-
-  test1();
-  test2();
-  test3();
-  test4();
-  //test5();
-  test6();
-  printf("\n");
   menu();
-
-//     dico dictionnaire,dictionnaire1,dictionnaire2;
-//     bool test,test2,test3,test4,test5;
-//     int nb_mots;
-//     /*TEST POUR LE TRAVAIL 1*/
-//
-//
-//     //dictionnaire=create_dico();
-//     //destroy_dico(&dictionnaire);
-//
-//     /*TEST POUR LE TRAVAIL 2*/
-//
-//     // dictionnaire1=create_dico();
-//     // dictionnaire2=create_dico();
-//     // printf("TEST TRAVAIL 1\n");
-//     // test=equals(dictionnaire1,dictionnaire2);
-//     // add_rec(dictionnaire1,"bonjour",7);
-//     // test3=equals(dictionnaire1,dictionnaire2);
-//     // add_rec(dictionnaire2,"bonjour",7);
-//     // test2=equals(dictionnaire1,dictionnaire2);
-//     // printf("Les dictionnaires sont égaux au debut [%d] a la fin [%d]\n Et milieu [%d]\n",test,test2,test3);
-//     // //Si les tests fonctionnent on a : 1 1 0
-//     // destroy_dico(&dictionnaire1);
-//     // destroy_dico(&dictionnaire2);
-//
-//     /*TEST POUR LE TRAVAIL 4*/
-//
-//     /*Test Pour Le Récursif */
-//
-//     dictionnaire=create_dico();
-//     printf("TEST TRAVAIL 4\n");
-//     test=add_rec(dictionnaire,"ours",4);
-//     add_rec(dictionnaire,"ourson",6);
-//     add_rec(dictionnaire,"oursonne",8);
-//     add_rec(dictionnaire,"ourse",5);
-//     add_rec(dictionnaire,"brule",5);
-//     add_rec(dictionnaire,"brille",6);
-//     add_rec(dictionnaire,"bord",4);
-//     add_rec(dictionnaire,"bordeau",7);
-//     add_rec(dictionnaire,"bateau",6);
-//     add_rec(dictionnaire,"bonsoir",7);
-//     test=remove_rec(dictionnaire,"ourse",5);
-//
-//     // print_prefix(dictionnaire);
-//     // nb_mots=nb_words(dictionnaire);
-//     // printf("Les tests : [%d][%d][%d][%d]\nIl y a [%d] mots dans le dico\n",test,test2,test3,test4,nb_mots);
-//     // destroy_dico(&dictionnaire);
-//
-//
-//     /*Test Pour L'itératif */
-//
-//    // dictionnaire=create_dico();
-//    // test =add_iter(dictionnaire,"bonsoir", 7);
-//    // printf("\n le test a été réussi : %d",test);
-//    // test =add_iter(dictionnaire,"bonsoir", 7);
-//    // printf("\n le test a été réussi : %d",test);
-//    // test=contains_iter(dictionnaire,"bonsoir",7);
-//    // printf("\n le dictionnaire contient t'il bonsoir ? : %d",test);
-//    // remove_iter(dictionnaire,"bonsoir",7);
-//    // test=contains_iter(dictionnaire,"bonsoir",7);
-//    // printf("\n le dico contient t'il bonsoir ? : %d \n",test);
-//
-//  // TEST TRAVAIL 5 : IMPRESSION DU DICO
-//    //  dictionnaire=create_dico();
-//    //  add_rec(dictionnaire,"bonjozy",7);
-//    //  add_rec(dictionnaire,"bon",3);
-//    //   // add_rec(dictionnaire,"co",2);
-//    // add_rec(dictionnaire,"bonsoiw",7);
-//    // add_rec(dictionnaire,"coucou",6);
-//    //  print_prefix(dictionnaire);
-//    //
-//    //  // remove_rec(dictionnaire,"b",3);
-//    //  print_prefix(dictionnaire);
-//    //
-//    //  print_dico(dictionnaire);
-//
-//    test_3();
-//
-// // TEST TRAVAIL 6 : ITERATEUR :
-// // appeler une fonction test ici.
-
 
 }

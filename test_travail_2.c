@@ -56,5 +56,7 @@ int test2()
   remove_rec(dictionnaire2,"ours",4);
   test2=equals(dictionnaire1,dictionnaire2);
   printf("EGALITE DES DEUX DICTIONNAIRES AVANT [%d] ET APRES [%d]\n",test1,test2);
+  destroy_dico(&dictionnaire2);
+  destroy_dico(&dictionnaire1);
   return 1;
 }
