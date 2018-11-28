@@ -333,19 +333,20 @@ bool remove_rec(dico d, char * word, unsigned size)
 
 /* Recherche d'un mot dans le dictionnaire */
 bool contains_iter(dico d, char * word, unsigned size){
-    tree tempo;
+
     for (int i = 0 ; i < size ; i++){
-       if (d[get_index(word[i])]==NULL){
-           return FALSE;
-       }
-       if(d[get_index(word[i])]->first == word[i]){
-           tempo=d[get_index(word[i])];
-           d=d[get_index(word[i])]->children;
+      if (d[get_index(word[i])]==NULL){
+          return FALSE;
+      }
+    if(d[get_index(word[i])]->first == word[i]){
+           if(i!= size-1){
+             d=d[get_index(word[i])]->children;
+           }
        }else{
            return FALSE;
        }
    }
-   if(tempo->end_of_word){
+   if(d[get_index(word[size-1])]->end_of_word){
        return TRUE;
    }
    else{
@@ -383,12 +384,15 @@ bool add_iter(dico d, char * word, unsigned size){
 
 /* Suppression d'un mot dans le dictionnaire */
 bool remove_iter(dico d, char * word, unsigned size){
+  int i;
     if (!contains_iter(d,word,size))
         return FALSE;
-    for (int i = 0 ;  nb_children(d[get_index(word[i])]) != 1 ; i++){
+    for (i = 0 ;  nb_children(d[get_index(word[i])]) != 1 ; i++){
          d=d[get_index(word[i])]->children;
     }
-    destroy_dico(&d);
+    destroy_dico(&d[get_index(word[i])]->children);
+    free(d[get_index(word[i])]);
+    d[get_index(word[i])]=NULL;
     return TRUE;
 }
 
